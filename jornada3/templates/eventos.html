@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <main class="container my-5">
+        <h1 class="text-center mb-5">Eventos de Ciclopaseo</h1>
+        
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    
+                {% for evento in eventos %}
+                <div class="col">
+                    <div class="card event-card">
+                        <img src="URL_IMAGEN_DEL_EVENTO.jpg" class="card-img-top" alt="{{ evento.nombre }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ evento.nombre }}</h5>
+                            <p class="card-text">{{ evento.descripcion }}</p>
+                            <ul class="list-unstyled">
+                                <li><strong>Fecha:</strong> {{ evento.fecha }}</li>
+                                <li><strong>Lugar:</strong> {{ evento.lugar }}</li>
+                            </ul>
+                            <form action="/inscribirse" method="POST">
+                                <input type="hidden" name="evento_id" value="{{ evento.id }}"> 
+                                <button type="submit" class="btn btn-success w-100">Inscribirme</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+{% endblock %}
