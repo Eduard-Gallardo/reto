@@ -6,14 +6,8 @@ dashboard_bp = Blueprint('dashboard', __name__)
 
 @dashboard_bp.route('/dashboard')
 def mostrar_dashboard():
-    # ... (código para verificar el rol del usuario) ...
-    
     conn = get_db_connection()
-    
-    # Obtener TODAS las bicicletas, sin importar el estado
     bicicletas = conn.execute("SELECT * FROM bicicleta").fetchall()
-    
-    # Obtener todos los préstamos para la sección de bicicletas prestadas
     bicicletas_alquiladas = conn.execute('''
         SELECT 
             b.id,
@@ -31,7 +25,6 @@ def mostrar_dashboard():
     
     conn.close()
     
-    # Procesar los datos para el frontend (como el tiempo transcurrido)
     prestamos_procesados = []
     for prestamo in bicicletas_alquiladas:
         fecha_prestamo = datetime.strptime(prestamo['fecha_prestamo'], '%Y-%m-%d %H:%M:%S')
@@ -74,6 +67,32 @@ def crear_bicicleta():
             flash('Bicicleta creada exitosamente.', 'success')
         except Exception as e:
             flash(f'Ocurrió un error al crear la bicicleta: {e}', 'error')
+        finally:
+            conn.close()
+
+    return redirect(url_for('dashboard.mostrar_dashboard'))
+
+
+@dashboard_bp.route('/crear_evento', methods=['POST'])
+def crear_evento():
+    if request.method == 'POST':
+        nombre = request.form['nombre_evento']
+        descripcion = request.form['descripcion']
+        fecha_str = request.form['fecha_evento']
+        lugar = request.form['lugar']
+
+        fecha = datetime.strptime(fecha_str, '%Y-%m-%dT%H:%M')
+
+        conn = get_db_connection()
+        try:
+            conn.execute(
+                "INSERT INTO evento (nombre, descripcion, fecha, lugar) VALUES (?, ?, ?, ?)",
+                (nombre, descripcion, fecha, lugar)
+            )
+            conn.commit()
+            flash('Evento creado exitosamente.', 'success')
+        except Exception as e:
+            flash(f'Ocurrió un error al crear el evento: {e}', 'error')
         finally:
             conn.close()
 

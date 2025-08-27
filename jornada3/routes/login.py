@@ -28,6 +28,6 @@ def login():
                 return redirect(url_for('index'))
         else:
             flash('Nombre de usuario o contraseña incorrectos.', 'error')
-            return redirect(url_for('login.mostrar_login'))
+            return redirect(url_for('mostrar_login'))
 
     return "Método no permitido", 405
